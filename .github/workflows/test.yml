@@ -1,7 +1,8 @@
-name: Test
+name: CI
+
 on:
   push:
-    branches: [main, staging]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -15,7 +16,6 @@ jobs:
           python-version: "3.8"
       - run: pip install coverage
       - name: Run tests with coverage
-        working-directory: tools/extensions/sublime
         run: ./run_tests.sh
 
   sublime-package:
@@ -30,7 +30,6 @@ jobs:
         with:
           sublime-text-version: ${{ matrix.st-version }}
           package-name: Autonoma
-          package-path: tools/extensions/sublime
       - uses: SublimeText/UnitTesting/actions/run-tests@v1
         with:
           package-name: Autonoma
