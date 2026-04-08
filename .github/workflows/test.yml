@@ -21,6 +21,10 @@ jobs:
   sublime-package:
     name: Sublime UnitTesting
     runs-on: ubuntu-latest
+    # ST4 UnitTesting integration is best-effort — the SublimeText/UnitTesting
+    # action can fail due to API availability timing and Package Control install
+    # issues in CI. The unittest job above is the authoritative gate.
+    continue-on-error: true
     strategy:
       matrix:
         st-version: [4]
