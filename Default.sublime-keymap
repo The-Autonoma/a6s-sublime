@@ -1,0 +1,8 @@
+[
+    { "keys": ["ctrl+alt+a"], "command": "autonoma_invoke_agent" },
+    { "keys": ["ctrl+alt+e"], "command": "autonoma_explain" },
+    { "keys": ["ctrl+alt+r"], "command": "autonoma_refactor" },
+    { "keys": ["ctrl+alt+v"], "command": "autonoma_review" },
+    { "keys": ["ctrl+alt+t"], "command": "autonoma_generate_tests" },
+    { "keys": ["ctrl+alt+l"], "command": "autonoma_list_tasks" }
+]

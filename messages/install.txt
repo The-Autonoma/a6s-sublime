@@ -1,0 +1,25 @@
+Autonoma Code for Sublime Text
+==============================
+
+Thanks for installing Autonoma Code.
+
+Prerequisites
+-------------
+Install and run the Autonoma CLI daemon:
+
+  brew install autonoma-cli
+  a6s code --daemon
+
+The daemon listens on ws://localhost:9876/ws by default. Change the port in
+Preferences > Package Settings > Autonoma > Settings.
+
+Getting started
+---------------
+- ctrl+alt+a  Invoke agent
+- ctrl+alt+e  Explain selection
+- ctrl+alt+r  Refactor selection
+- ctrl+alt+v  Review selection
+- ctrl+alt+t  Generate tests for selection
+- ctrl+alt+l  List background tasks
+
+All commands are also available from Tools > Autonoma and the command palette.

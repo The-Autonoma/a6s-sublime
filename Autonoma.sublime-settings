@@ -1,0 +1,16 @@
+{
+    // Local daemon port (a6s code --daemon)
+    "daemon_port": 9876,
+
+    // Automatically connect to the daemon on plugin load
+    "auto_connect": true,
+
+    // Telemetry opt-in. null = prompt on first run, true/false once chosen.
+    "telemetry_enabled": null,
+
+    // Enable default keybindings
+    "keymaps_enabled": true,
+
+    // Default review type: "security" | "performance" | "quality" | "all"
+    "default_review_type": "all"
+}

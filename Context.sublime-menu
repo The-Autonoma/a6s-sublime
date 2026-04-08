@@ -1,0 +1,14 @@
+[
+    { "caption": "-" },
+    {
+        "caption": "Autonoma",
+        "children": [
+            { "caption": "Explain Selection", "command": "autonoma_explain" },
+            { "caption": "Refactor Selection", "command": "autonoma_refactor" },
+            { "caption": "Review Selection", "command": "autonoma_review" },
+            { "caption": "Generate Tests", "command": "autonoma_generate_tests" },
+            { "caption": "-" },
+            { "caption": "Invoke Agent...", "command": "autonoma_invoke_agent" }
+        ]
+    }
+]

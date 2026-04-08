@@ -1,0 +1,71 @@
+[
+    {
+        "id": "tools",
+        "children": [
+            { "caption": "-" },
+            {
+                "caption": "Autonoma",
+                "id": "autonoma",
+                "children": [
+                    { "caption": "Connect to Daemon", "command": "autonoma_connect" },
+                    { "caption": "Disconnect from Daemon", "command": "autonoma_disconnect" },
+                    { "caption": "-" },
+                    { "caption": "Invoke Agent...", "command": "autonoma_invoke_agent" },
+                    { "caption": "-" },
+                    { "caption": "Explain Selection", "command": "autonoma_explain" },
+                    { "caption": "Refactor Selection", "command": "autonoma_refactor" },
+                    { "caption": "Review Selection", "command": "autonoma_review" },
+                    { "caption": "Generate Tests for Selection", "command": "autonoma_generate_tests" },
+                    { "caption": "-" },
+                    { "caption": "List Background Tasks", "command": "autonoma_list_tasks" },
+                    { "caption": "Cancel Background Task...", "command": "autonoma_cancel_task" },
+                    { "caption": "-" },
+                    { "caption": "Preview Pending Artifacts", "command": "autonoma_preview_artifacts" },
+                    { "caption": "Apply Pending Artifacts", "command": "autonoma_apply_artifacts" },
+                    { "caption": "-" },
+                    {
+                        "caption": "Settings",
+                        "command": "edit_settings",
+                        "args": {
+                            "base_file": "${packages}/Autonoma/Autonoma.sublime-settings",
+                            "default": "// Autonoma user settings\n{\n\t\n}\n"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "preferences",
+        "children": [
+            {
+                "caption": "Package Settings",
+                "mnemonic": "P",
+                "id": "package-settings",
+                "children": [
+                    {
+                        "caption": "Autonoma",
+                        "children": [
+                            {
+                                "caption": "Settings",
+                                "command": "edit_settings",
+                                "args": {
+                                    "base_file": "${packages}/Autonoma/Autonoma.sublime-settings",
+                                    "default": "// Autonoma user settings\n{\n\t\n}\n"
+                                }
+                            },
+                            {
+                                "caption": "Key Bindings",
+                                "command": "edit_settings",
+                                "args": {
+                                    "base_file": "${packages}/Autonoma/Default.sublime-keymap",
+                                    "default": "// Autonoma user key bindings\n[\n\t\n]\n"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

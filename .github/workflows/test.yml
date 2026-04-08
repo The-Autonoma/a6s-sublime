@@ -1,0 +1,36 @@
+name: Test
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+
+jobs:
+  unittest:
+    name: Unit tests + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+      - run: pip install coverage
+      - name: Run tests with coverage
+        working-directory: tools/extensions/sublime
+        run: ./run_tests.sh
+
+  sublime-package:
+    name: Sublime UnitTesting
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        st-version: [4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: SublimeText/UnitTesting/actions/setup@v1
+        with:
+          sublime-text-version: ${{ matrix.st-version }}
+          package-name: Autonoma
+          package-path: tools/extensions/sublime
+      - uses: SublimeText/UnitTesting/actions/run-tests@v1
+        with:
+          package-name: Autonoma
