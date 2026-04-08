@@ -63,6 +63,21 @@ class _FakeClient:
         self.calls.append(("background_list",))
         return self.tasks
 
+    def execution_status(self, execution_id):
+        self._check("execution_status")
+        self.calls.append(("execution_status", execution_id))
+        return {"status": "running", "phase": "Generate", "progress": 45}
+
+    def background_launch(self, task, agent_type):
+        self._check("background_launch")
+        self.calls.append(("background_launch", task, agent_type))
+        return "task_42"
+
+    def background_output(self, task_id):
+        self._check("background_output")
+        self.calls.append(("background_output", task_id))
+        return "task output text"
+
     def background_cancel(self, task_id):
         self.calls.append(("background_cancel", task_id))
 
@@ -245,6 +260,153 @@ class SelectionCommandTests(unittest.TestCase):
     def test_disconnected_client_refuses(self):
         self.client.connected = False
         self._run(cmds.AutonomaExplainCommand)
+        self.assertTrue(sublime_stub.errors())
+
+
+class ListAgentsCommandTests(unittest.TestCase):
+    def setUp(self):
+        sublime_stub.reset()
+        self.window = sublime_stub.new_window()
+        self.client = _FakeClient()
+        _install_plugin(self.client)
+
+    def test_happy_path(self):
+        cmd = cmds.AutonomaListAgentsCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        self.assertTrue(any(c[0] == "list_agents" for c in self.client.calls))
+        # quick panel shown
+        items, cb = self.window.quick_panel_calls[0]
+        self.assertEqual(len(items), 1)
+        cb(0)
+
+    def test_no_agents(self):
+        self.client.agents = []
+        cmd = cmds.AutonomaListAgentsCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        self.assertTrue(sublime_stub.errors())
+
+    def test_list_failure(self):
+        self.client.raise_on = "list_agents"
+        cmd = cmds.AutonomaListAgentsCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        self.assertTrue(sublime_stub.errors())
+
+
+class ExecutionStatusCommandTests(unittest.TestCase):
+    def setUp(self):
+        sublime_stub.reset()
+        self.window = sublime_stub.new_window()
+        self.client = _FakeClient()
+        _install_plugin(self.client)
+
+    def test_happy_path(self):
+        cmd = cmds.AutonomaExecutionStatusCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        caption, initial, on_done = self.window.input_panel_calls[0]
+        on_done("exec_123")
+        self.assertTrue(any(c[0] == "execution_status" for c in self.client.calls))
+
+    def test_empty_input(self):
+        cmd = cmds.AutonomaExecutionStatusCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        _, _, on_done = self.window.input_panel_calls[0]
+        on_done("   ")
+        self.assertTrue(sublime_stub.errors())
+
+    def test_failure(self):
+        self.client.raise_on = "execution_status"
+        cmd = cmds.AutonomaExecutionStatusCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        _, _, on_done = self.window.input_panel_calls[0]
+        on_done("exec_123")
+        self.assertTrue(sublime_stub.errors())
+
+
+class BackgroundLaunchCommandTests(unittest.TestCase):
+    def setUp(self):
+        sublime_stub.reset()
+        self.window = sublime_stub.new_window()
+        self.client = _FakeClient()
+        _install_plugin(self.client)
+
+    def test_happy_path(self):
+        cmd = cmds.AutonomaBackgroundLaunchCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        # agent picker shown
+        items, cb = self.window.quick_panel_calls[0]
+        cb(0)
+        # task input shown
+        caption, initial, on_done = self.window.input_panel_calls[0]
+        on_done("run migration")
+        self.assertTrue(any(c[0] == "background_launch" for c in self.client.calls))
+
+    def test_empty_task(self):
+        cmd = cmds.AutonomaBackgroundLaunchCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        _, cb = self.window.quick_panel_calls[0]
+        cb(0)
+        _, _, on_done = self.window.input_panel_calls[0]
+        on_done("")
+        self.assertTrue(sublime_stub.errors())
+
+    def test_cancel_picker(self):
+        cmd = cmds.AutonomaBackgroundLaunchCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        _, cb = self.window.quick_panel_calls[0]
+        cb(-1)
+        self.assertEqual(len(self.window.input_panel_calls), 0)
+
+    def test_launch_failure(self):
+        self.client.raise_on = "background_launch"
+        cmd = cmds.AutonomaBackgroundLaunchCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        _, cb = self.window.quick_panel_calls[0]
+        cb(0)
+        _, _, on_done = self.window.input_panel_calls[0]
+        on_done("do stuff")
+        self.assertTrue(sublime_stub.errors())
+
+
+class BackgroundOutputCommandTests(unittest.TestCase):
+    def setUp(self):
+        sublime_stub.reset()
+        self.window = sublime_stub.new_window()
+        self.client = _FakeClient()
+        _install_plugin(self.client)
+
+    def test_happy_path(self):
+        cmd = cmds.AutonomaBackgroundOutputCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        caption, initial, on_done = self.window.input_panel_calls[0]
+        on_done("task_42")
+        self.assertTrue(any(c[0] == "background_output" for c in self.client.calls))
+
+    def test_empty_input(self):
+        cmd = cmds.AutonomaBackgroundOutputCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        _, _, on_done = self.window.input_panel_calls[0]
+        on_done("")
+        self.assertTrue(sublime_stub.errors())
+
+    def test_failure(self):
+        self.client.raise_on = "background_output"
+        cmd = cmds.AutonomaBackgroundOutputCommand(self.window)
+        cmd.window = self.window
+        cmd.run()
+        _, _, on_done = self.window.input_panel_calls[0]
+        on_done("task_42")
         self.assertTrue(sublime_stub.errors())
 
 

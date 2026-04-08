@@ -296,6 +296,122 @@ class AutonomaGenerateTestsCommand(_SelectionCommand):
 # Background task commands
 # ---------------------------------------------------------------------------
 
+class AutonomaListAgentsCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def work() -> None:
+            try:
+                agents = client.list_agents()
+            except Exception as exc:
+                ui.show_error("Autonoma: failed to list agents: {}".format(exc))
+                return
+            if not agents:
+                ui.show_error("Autonoma: no agents available.")
+                return
+            def on_pick(agent: Optional[Dict[str, Any]]) -> None:
+                if agent is None:
+                    return
+                ui.write_output(
+                    self.window,
+                    "Agent: {} — {}".format(
+                        agent.get("id", "?"), agent.get("description", "")
+                    ),
+                )
+            ui.show_agent_picker(self.window, agents, on_pick)
+        _run_async(work)
+
+
+class AutonomaExecutionStatusCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def on_exec_id(exec_id: str) -> None:
+            validated = validate_input(exec_id)
+            if validated is None:
+                return
+            def work() -> None:
+                try:
+                    result = client.execution_status(validated)
+                except Exception as exc:
+                    ui.show_error("Autonoma: execution status failed: {}".format(exc))
+                    return
+                status = result.get("status", "unknown")
+                phase = result.get("phase", "unknown")
+                progress = result.get("progress", 0)
+                ui.write_output(
+                    self.window,
+                    "=== Execution {} ===\nstatus={} phase={} progress={}%".format(
+                        validated, status, phase, progress
+                    ),
+                )
+            _run_async(work)
+        ui.show_input(self.window, "Execution ID:", "", on_exec_id)
+
+
+class AutonomaBackgroundLaunchCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def fetch() -> None:
+            try:
+                agents = client.list_agents()
+            except Exception as exc:
+                ui.show_error("Autonoma: failed to list agents: {}".format(exc))
+                return
+            if not agents:
+                ui.show_error("Autonoma: no agents available.")
+                return
+            def on_agent(agent: Optional[Dict[str, Any]]) -> None:
+                if agent is None:
+                    return
+                def on_task(task: str) -> None:
+                    validated = validate_input(task)
+                    if validated is None:
+                        return
+                    def launch() -> None:
+                        try:
+                            task_id = client.background_launch(validated, agent.get("id", ""))
+                            ui.set_phase_status(
+                                self.window,
+                                "background",
+                                "launched {}".format(task_id),
+                                0,
+                            )
+                        except Exception as exc:
+                            ui.show_error("Autonoma: launch failed: {}".format(exc))
+                    _run_async(launch)
+                ui.show_input(self.window, "Task for {}:".format(agent.get("name", agent.get("id", ""))), "", on_task)
+            ui.show_agent_picker(self.window, agents, on_agent)
+        _run_async(fetch)
+
+
+class AutonomaBackgroundOutputCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def on_task_id(task_id: str) -> None:
+            validated = validate_input(task_id)
+            if validated is None:
+                return
+            def work() -> None:
+                try:
+                    output = client.background_output(validated)
+                except Exception as exc:
+                    ui.show_error("Autonoma: task output failed: {}".format(exc))
+                    return
+                ui.write_output(
+                    self.window,
+                    "=== Task {} Output ===\n{}".format(validated, output),
+                )
+            _run_async(work)
+        ui.show_input(self.window, "Task ID:", "", on_task_id)
+
+
 class AutonomaListTasksCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         client = _require_client(self.window)
