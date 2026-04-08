@@ -1,17 +1,17 @@
-Autonoma Code for Sublime Text
+A6s for Sublime Text
 ==============================
 
-Thanks for installing Autonoma Code.
+Thanks for installing A6s.
 
 Prerequisites
 -------------
-Install and run the Autonoma CLI daemon:
+Install and run the A6s CLI daemon:
 
   brew install autonoma-cli
   a6s code --daemon
 
 The daemon listens on ws://localhost:9876/ws by default. Change the port in
-Preferences > Package Settings > Autonoma > Settings.
+Preferences > Package Settings > A6s > Settings.
 
 Getting started
 ---------------
@@ -22,4 +22,4 @@ Getting started
 - ctrl+alt+t  Generate tests for selection
 - ctrl+alt+l  List background tasks
 
-All commands are also available from Tools > Autonoma and the command palette.
+All commands are also available from Tools > A6s and the command palette.

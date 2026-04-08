@@ -1,7 +1,7 @@
 [
     { "caption": "-" },
     {
-        "caption": "Autonoma",
+        "caption": "A6s",
         "children": [
             { "caption": "Explain Selection", "command": "autonoma_explain" },
             { "caption": "Refactor Selection", "command": "autonoma_refactor" },

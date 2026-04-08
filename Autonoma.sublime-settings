@@ -1,5 +1,5 @@
 {
-    // Local daemon port (a6s code --daemon)
+    // Local A6s daemon port (a6s code --daemon)
     "daemon_port": 9876,
 
     // Automatically connect to the daemon on plugin load

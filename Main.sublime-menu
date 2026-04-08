@@ -4,7 +4,7 @@
         "children": [
             { "caption": "-" },
             {
-                "caption": "Autonoma",
+                "caption": "A6s",
                 "id": "autonoma",
                 "children": [
                     { "caption": "Connect to Daemon", "command": "autonoma_connect" },
@@ -33,7 +33,7 @@
                         "command": "edit_settings",
                         "args": {
                             "base_file": "${packages}/Autonoma/Autonoma.sublime-settings",
-                            "default": "// Autonoma user settings\n{\n\t\n}\n"
+                            "default": "// A6s user settings\n{\n\t\n}\n"
                         }
                     }
                 ]
@@ -49,14 +49,14 @@
                 "id": "package-settings",
                 "children": [
                     {
-                        "caption": "Autonoma",
+                        "caption": "A6s",
                         "children": [
                             {
                                 "caption": "Settings",
                                 "command": "edit_settings",
                                 "args": {
                                     "base_file": "${packages}/Autonoma/Autonoma.sublime-settings",
-                                    "default": "// Autonoma user settings\n{\n\t\n}\n"
+                                    "default": "// A6s user settings\n{\n\t\n}\n"
                                 }
                             },
                             {
@@ -64,7 +64,7 @@
                                 "command": "edit_settings",
                                 "args": {
                                     "base_file": "${packages}/Autonoma/Default.sublime-keymap",
-                                    "default": "// Autonoma user key bindings\n[\n\t\n]\n"
+                                    "default": "// A6s user key bindings\n[\n\t\n]\n"
                                 }
                             }
                         ]

@@ -45,15 +45,15 @@ MAX_INPUT_CHARS = 10000
 def validate_input(text: str) -> Optional[str]:
     """Return sanitized text or None if invalid (errors already surfaced)."""
     if text is None:
-        ui.show_error("Autonoma: input is empty.")
+        ui.show_error("A6s: input is empty.")
         return None
     text = text.strip()
     if not text:
-        ui.show_error("Autonoma: input is empty.")
+        ui.show_error("A6s: input is empty.")
         return None
     if len(text) > MAX_INPUT_CHARS:
         ui.show_error(
-            "Autonoma: input exceeds {} character limit ({}).".format(
+            "A6s: input exceeds {} character limit ({}).".format(
                 MAX_INPUT_CHARS, len(text)
             )
         )
@@ -88,13 +88,13 @@ def _get_plugin() -> Any:
 def _require_client(window: Any) -> Any:
     plug = _get_plugin()
     if plug is None:
-        ui.show_error("Autonoma plugin not loaded.")
+        ui.show_error("A6s plugin not loaded.")
         return None
     client = plug.client
     if client is None or not client.is_connected():
         ui.show_error(
-            "Autonoma daemon is not connected. Run `a6s code --daemon` then "
-            "use `Autonoma: Connect`."
+            "A6s daemon is not connected. Run `a6s code --daemon` then "
+            "use `A6s: Connect`."
         )
         return None
     return client
@@ -140,17 +140,17 @@ class AutonomaConnectCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         plug = _get_plugin()
         if plug is None:
-            ui.show_error("Autonoma plugin not loaded.")
+            ui.show_error("A6s plugin not loaded.")
             return
         def work() -> None:
             ok = plug.connect()
             if ok:
                 ui.set_connection_status(self.window, True)
-                ui.write_output(self.window, "Autonoma: connected to daemon.")
+                ui.write_output(self.window, "A6s: connected to daemon.")
             else:
                 ui.set_connection_status(self.window, False)
                 ui.show_message(
-                    "Autonoma: could not connect to daemon on port {}.\n\n"
+                    "A6s: could not connect to daemon on port {}.\n\n"
                     "Install and start the CLI daemon:\n"
                     "  brew install autonoma-cli\n"
                     "  a6s code --daemon\n".format(plug.settings.get("daemon_port", 9876))
@@ -165,7 +165,7 @@ class AutonomaDisconnectCommand(_WindowCommand):
             return
         plug.disconnect()
         ui.set_connection_status(self.window, False)
-        ui.write_output(self.window, "Autonoma: disconnected.")
+        ui.write_output(self.window, "A6s: disconnected.")
 
 
 # ---------------------------------------------------------------------------
@@ -181,10 +181,10 @@ class AutonomaInvokeAgentCommand(_WindowCommand):
             try:
                 agents = client.list_agents()
             except Exception as exc:
-                ui.show_error("Autonoma: failed to list agents: {}".format(exc))
+                ui.show_error("A6s: failed to list agents: {}".format(exc))
                 return
             if not agents:
-                ui.show_error("Autonoma: no agents available.")
+                ui.show_error("A6s: no agents available.")
                 return
             def on_agent(agent: Optional[Dict[str, Any]]) -> None:
                 if agent is None:
@@ -198,12 +198,12 @@ class AutonomaInvokeAgentCommand(_WindowCommand):
                             exec_id = client.invoke_agent(agent.get("id", ""), validated)
                             ui.write_output(
                                 self.window,
-                                "Autonoma: invoked {} (execution {})".format(
+                                "A6s: invoked {} (execution {})".format(
                                     agent.get("name", "?"), exec_id
                                 ),
                             )
                         except Exception as exc:
-                            ui.show_error("Autonoma: invoke failed: {}".format(exc))
+                            ui.show_error("A6s: invoke failed: {}".format(exc))
                     _run_async(invoke)
                 ui.show_input(self.window, "Task for {}:".format(agent.get("name", "")), "", on_task)
             ui.show_agent_picker(self.window, agents, on_agent)
@@ -237,7 +237,7 @@ class _SelectionCommand(_TextCommand):
             try:
                 result = call(client, validated, language, file_path)
             except Exception as exc:
-                ui.show_error("Autonoma: {} failed: {}".format(verb, exc))
+                ui.show_error("A6s: {} failed: {}".format(verb, exc))
                 return
             render(window, result)
         _run_async(work)
@@ -305,10 +305,10 @@ class AutonomaListAgentsCommand(_WindowCommand):
             try:
                 agents = client.list_agents()
             except Exception as exc:
-                ui.show_error("Autonoma: failed to list agents: {}".format(exc))
+                ui.show_error("A6s: failed to list agents: {}".format(exc))
                 return
             if not agents:
-                ui.show_error("Autonoma: no agents available.")
+                ui.show_error("A6s: no agents available.")
                 return
             def on_pick(agent: Optional[Dict[str, Any]]) -> None:
                 if agent is None:
@@ -336,7 +336,7 @@ class AutonomaExecutionStatusCommand(_WindowCommand):
                 try:
                     result = client.execution_status(validated)
                 except Exception as exc:
-                    ui.show_error("Autonoma: execution status failed: {}".format(exc))
+                    ui.show_error("A6s: execution status failed: {}".format(exc))
                     return
                 status = result.get("status", "unknown")
                 phase = result.get("phase", "unknown")
@@ -360,10 +360,10 @@ class AutonomaBackgroundLaunchCommand(_WindowCommand):
             try:
                 agents = client.list_agents()
             except Exception as exc:
-                ui.show_error("Autonoma: failed to list agents: {}".format(exc))
+                ui.show_error("A6s: failed to list agents: {}".format(exc))
                 return
             if not agents:
-                ui.show_error("Autonoma: no agents available.")
+                ui.show_error("A6s: no agents available.")
                 return
             def on_agent(agent: Optional[Dict[str, Any]]) -> None:
                 if agent is None:
@@ -382,7 +382,7 @@ class AutonomaBackgroundLaunchCommand(_WindowCommand):
                                 0,
                             )
                         except Exception as exc:
-                            ui.show_error("Autonoma: launch failed: {}".format(exc))
+                            ui.show_error("A6s: launch failed: {}".format(exc))
                     _run_async(launch)
                 ui.show_input(self.window, "Task for {}:".format(agent.get("name", agent.get("id", ""))), "", on_task)
             ui.show_agent_picker(self.window, agents, on_agent)
@@ -402,7 +402,7 @@ class AutonomaBackgroundOutputCommand(_WindowCommand):
                 try:
                     output = client.background_output(validated)
                 except Exception as exc:
-                    ui.show_error("Autonoma: task output failed: {}".format(exc))
+                    ui.show_error("A6s: task output failed: {}".format(exc))
                     return
                 ui.write_output(
                     self.window,
@@ -421,10 +421,10 @@ class AutonomaListTasksCommand(_WindowCommand):
             try:
                 tasks = client.background_list()
             except Exception as exc:
-                ui.show_error("Autonoma: list tasks failed: {}".format(exc))
+                ui.show_error("A6s: list tasks failed: {}".format(exc))
                 return
             if not tasks:
-                ui.write_output(self.window, "Autonoma: no background tasks.")
+                ui.write_output(self.window, "A6s: no background tasks.")
                 return
             def on_pick(task: Optional[Dict[str, Any]]) -> None:
                 if task is None:
@@ -450,11 +450,11 @@ class AutonomaCancelTaskCommand(_WindowCommand):
             try:
                 tasks = client.background_list()
             except Exception as exc:
-                ui.show_error("Autonoma: list tasks failed: {}".format(exc))
+                ui.show_error("A6s: list tasks failed: {}".format(exc))
                 return
             active = [t for t in tasks if t.get("status") in ("queued", "running")]
             if not active:
-                ui.show_error("Autonoma: no cancellable tasks.")
+                ui.show_error("A6s: no cancellable tasks.")
                 return
             def on_pick(task: Optional[Dict[str, Any]]) -> None:
                 if task is None:
@@ -462,9 +462,9 @@ class AutonomaCancelTaskCommand(_WindowCommand):
                 def do_cancel() -> None:
                     try:
                         client.background_cancel(task.get("id", ""))
-                        ui.write_output(self.window, "Autonoma: cancelled {}.".format(task.get("id")))
+                        ui.write_output(self.window, "A6s: cancelled {}.".format(task.get("id")))
                     except Exception as exc:
-                        ui.show_error("Autonoma: cancel failed: {}".format(exc))
+                        ui.show_error("A6s: cancel failed: {}".format(exc))
                 _run_async(do_cancel)
             ui.show_task_picker(self.window, active, on_pick)
         _run_async(work)
@@ -484,7 +484,7 @@ class AutonomaPreviewArtifactsCommand(_WindowCommand):
             try:
                 preview = client.artifacts_preview(arts)
             except Exception as exc:
-                ui.show_error("Autonoma: preview failed: {}".format(exc))
+                ui.show_error("A6s: preview failed: {}".format(exc))
                 return
             ui.write_output(self.window, "=== Artifact Preview ===\n" + ui.format_artifacts_preview(preview))
         _run_async(work)
@@ -500,7 +500,7 @@ class AutonomaApplyArtifactsCommand(_WindowCommand):
             try:
                 result = client.artifacts_apply(arts)
             except Exception as exc:
-                ui.show_error("Autonoma: apply failed: {}".format(exc))
+                ui.show_error("A6s: apply failed: {}".format(exc))
                 return
             ui.write_output(
                 self.window,

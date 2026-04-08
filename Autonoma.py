@@ -161,9 +161,9 @@ class AutonomaPlugin:
             return
         def _prompt() -> None:
             answer = sublime.ok_cancel_dialog(  # type: ignore
-                "Autonoma would like to send anonymous usage telemetry to help "
+                "A6s would like to send anonymous usage telemetry to help "
                 "improve the extension. No code or filenames are transmitted.\n\n"
-                "You can change this anytime in Autonoma settings.",
+                "You can change this anytime in A6s settings.",
                 "Enable",
             )
             self.settings.set("telemetry_enabled", bool(answer))

@@ -1,5 +1,5 @@
 {
-    "description": "Autonoma Code: invoke RIGOR agents, explain/refactor/review/test code from within Sublime Text via the local Autonoma daemon.",
+    "description": "A6s: invoke RIGOR agents, explain/refactor/review/test code from within Sublime Text via the local A6s daemon.",
     "homepage": "https://github.com/autonoma/sublime-autonoma-code",
     "labels": ["ai", "code-generation", "refactor", "review", "testing", "rigor", "autonoma"],
     "readme": "https://raw.githubusercontent.com/autonoma/sublime-autonoma-code/main/README.md",

@@ -31,7 +31,7 @@ def _on_main(fn: Callable[[], None]) -> None:
 def set_connection_status(window: Any, connected: bool, detail: str = "") -> None:
     """Update status bar with connection state."""
     icon = "connected" if connected else "offline"
-    text = "Autonoma: {}".format(icon)
+    text = "A6s: {}".format(icon)
     if detail:
         text += " - " + detail
     def _apply() -> None:
@@ -44,7 +44,7 @@ def set_connection_status(window: Any, connected: bool, detail: str = "") -> Non
 
 def set_phase_status(window: Any, phase: str, status: str, progress: int) -> None:
     """Update status bar with current RIGOR phase."""
-    text = "Autonoma: [{}] {} ({}%)".format(phase, status, progress)
+    text = "A6s: [{}] {} ({}%)".format(phase, status, progress)
     def _apply() -> None:
         if window is None:
             return
@@ -70,7 +70,7 @@ def _ensure_panel(window: Any) -> Any:
 
 
 def write_output(window: Any, text: str, show: bool = True) -> None:
-    """Append text to the Autonoma output panel."""
+    """Append text to the A6s output panel."""
     if not text.endswith("\n"):
         text = text + "\n"
     def _apply() -> None:
