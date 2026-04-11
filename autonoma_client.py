@@ -1,7 +1,8 @@
 """
 Autonoma WebSocket client for Sublime Text 4.
 
-Implements the authoritative DAEMON-PROTOCOL.md spec (v1.0):
+Implements the authoritative Autonoma Daemon Protocol v1.0:
+# See https://www.theautonoma.io/docs/build/cli/daemon
     ws://localhost:9876/ws
 
 This module uses only the Python 3.8 stdlib (socket, struct, threading, json,
