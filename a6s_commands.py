@@ -3,7 +3,7 @@ Sublime Text commands for the Autonoma plugin.
 
 All long-running work (daemon RPC) is dispatched to a worker thread via
 sublime.set_timeout_async to avoid blocking the UI. View mutations are
-scheduled back onto the main thread through autonoma_ui helpers.
+scheduled back onto the main thread through a6s_ui helpers.
 """
 
 from __future__ import annotations
@@ -30,9 +30,9 @@ except Exception:  # pragma: no cover - test stub path
         def run(self) -> None: ...
 
 try:
-    from . import autonoma_ui as ui  # type: ignore
+    from . import a6s_ui as ui  # type: ignore
 except Exception:  # pragma: no cover - flat import path (ST or tests)
-    import autonoma_ui as ui  # type: ignore  # noqa: E402
+    import a6s_ui as ui  # type: ignore  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -74,12 +74,12 @@ def _run_async(fn: Callable[[], None]) -> None:
 
 
 def _get_plugin() -> Any:
-    """Return the current Autonoma plugin singleton from Autonoma module."""
+    """Return the current Autonoma plugin singleton from A6s module."""
     try:
-        from . import Autonoma as plug  # type: ignore
+        from . import A6s as plug  # type: ignore
     except Exception:
         try:
-            import Autonoma as plug  # type: ignore
+            import A6s as plug  # type: ignore
         except Exception:
             return None
     return getattr(plug, "PLUGIN", None)
@@ -136,7 +136,7 @@ def _view_filename(view: Any) -> str:
 # Connection commands
 # ---------------------------------------------------------------------------
 
-class AutonomaConnectCommand(_WindowCommand):
+class A6sConnectCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         plug = _get_plugin()
         if plug is None:
@@ -152,13 +152,13 @@ class AutonomaConnectCommand(_WindowCommand):
                 ui.show_message(
                     "A6s: could not connect to daemon on port {}.\n\n"
                     "Install and start the CLI daemon:\n"
-                    "  brew install autonoma-cli\n"
+                    "  brew install autonoma/tap/a6s\n"
                     "  a6s code --daemon\n".format(plug.settings.get("daemon_port", 9876))
                 )
         _run_async(work)
 
 
-class AutonomaDisconnectCommand(_WindowCommand):
+class A6sDisconnectCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         plug = _get_plugin()
         if plug is None:
@@ -172,7 +172,7 @@ class AutonomaDisconnectCommand(_WindowCommand):
 # Agent commands
 # ---------------------------------------------------------------------------
 
-class AutonomaInvokeAgentCommand(_WindowCommand):
+class A6sInvokeAgentCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:
@@ -243,7 +243,7 @@ class _SelectionCommand(_TextCommand):
         _run_async(work)
 
 
-class AutonomaExplainCommand(_SelectionCommand):
+class A6sExplainCommand(_SelectionCommand):
     def run(self, edit: Any) -> None:  # type: ignore[override]
         self._run_with_selection(
             "explain",
@@ -252,7 +252,7 @@ class AutonomaExplainCommand(_SelectionCommand):
         )
 
 
-class AutonomaRefactorCommand(_SelectionCommand):
+class A6sRefactorCommand(_SelectionCommand):
     def run(self, edit: Any) -> None:  # type: ignore[override]
         self._run_with_selection(
             "refactor",
@@ -268,7 +268,7 @@ class AutonomaRefactorCommand(_SelectionCommand):
         )
 
 
-class AutonomaReviewCommand(_SelectionCommand):
+class A6sReviewCommand(_SelectionCommand):
     def run(self, edit: Any) -> None:  # type: ignore[override]
         self._run_with_selection(
             "review",
@@ -280,7 +280,7 @@ class AutonomaReviewCommand(_SelectionCommand):
         )
 
 
-class AutonomaGenerateTestsCommand(_SelectionCommand):
+class A6sGenerateTestsCommand(_SelectionCommand):
     def run(self, edit: Any) -> None:  # type: ignore[override]
         self._run_with_selection(
             "generate-tests",
@@ -296,7 +296,7 @@ class AutonomaGenerateTestsCommand(_SelectionCommand):
 # Background task commands
 # ---------------------------------------------------------------------------
 
-class AutonomaListAgentsCommand(_WindowCommand):
+class A6sListAgentsCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:
@@ -323,7 +323,7 @@ class AutonomaListAgentsCommand(_WindowCommand):
         _run_async(work)
 
 
-class AutonomaExecutionStatusCommand(_WindowCommand):
+class A6sExecutionStatusCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:
@@ -351,7 +351,7 @@ class AutonomaExecutionStatusCommand(_WindowCommand):
         ui.show_input(self.window, "Execution ID:", "", on_exec_id)
 
 
-class AutonomaBackgroundLaunchCommand(_WindowCommand):
+class A6sBackgroundLaunchCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:
@@ -389,7 +389,7 @@ class AutonomaBackgroundLaunchCommand(_WindowCommand):
         _run_async(fetch)
 
 
-class AutonomaBackgroundOutputCommand(_WindowCommand):
+class A6sBackgroundOutputCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:
@@ -412,7 +412,7 @@ class AutonomaBackgroundOutputCommand(_WindowCommand):
         ui.show_input(self.window, "Task ID:", "", on_task_id)
 
 
-class AutonomaListTasksCommand(_WindowCommand):
+class A6sListTasksCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:
@@ -441,7 +441,7 @@ class AutonomaListTasksCommand(_WindowCommand):
         _run_async(work)
 
 
-class AutonomaCancelTaskCommand(_WindowCommand):
+class A6sCancelTaskCommand(_WindowCommand):
     def run(self) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:
@@ -474,7 +474,7 @@ class AutonomaCancelTaskCommand(_WindowCommand):
 # Artifact commands
 # ---------------------------------------------------------------------------
 
-class AutonomaPreviewArtifactsCommand(_WindowCommand):
+class A6sPreviewArtifactsCommand(_WindowCommand):
     def run(self, artifacts: Optional[List[Dict[str, Any]]] = None) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:
@@ -490,7 +490,7 @@ class AutonomaPreviewArtifactsCommand(_WindowCommand):
         _run_async(work)
 
 
-class AutonomaApplyArtifactsCommand(_WindowCommand):
+class A6sApplyArtifactsCommand(_WindowCommand):
     def run(self, artifacts: Optional[List[Dict[str, Any]]] = None) -> None:  # type: ignore[override]
         client = _require_client(self.window)
         if client is None:

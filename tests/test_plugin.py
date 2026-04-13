@@ -14,7 +14,7 @@ if _ROOT not in sys.path:
 from tests import sublime_stub  # noqa: E402
 sublime_stub.install()
 
-import Autonoma as plug_mod  # noqa: E402  N813
+import A6s as plug_mod  # noqa: E402  N813
 from tests.mock_ws_server import MockWebSocketServer  # noqa: E402
 
 
@@ -26,11 +26,11 @@ def _make_handler():
 
 class PluginLifecycleTests(unittest.TestCase):
     def test_load_no_auto_connect(self):
-        p = plug_mod.AutonomaPlugin()
+        p = plug_mod.A6sPlugin()
         p.settings = plug_mod._StaticSettings({"daemon_port": 9999, "auto_connect": False, "telemetry_enabled": False})
         # simulate a client that won't actually connect (no server)
-        import autonoma_client as ac
-        p.client = ac.AutonomaClient(port=9999, dispatcher=lambda fn: fn())
+        import a6s_client as ac
+        p.client = ac.A6sClient(port=9999, dispatcher=lambda fn: fn())
         p._wire_event_handlers()
         self.assertIsNotNone(p.client)
         p.unload()
@@ -38,10 +38,10 @@ class PluginLifecycleTests(unittest.TestCase):
     def test_connect_success_and_disconnect(self):
         server = MockWebSocketServer(handler=_make_handler()).start()
         try:
-            p = plug_mod.AutonomaPlugin()
+            p = plug_mod.A6sPlugin()
             p.settings = plug_mod._StaticSettings({"daemon_port": server.port, "auto_connect": False, "telemetry_enabled": False})
-            import autonoma_client as ac
-            p.client = ac.AutonomaClient(port=server.port, dispatcher=lambda fn: fn())
+            import a6s_client as ac
+            p.client = ac.A6sClient(port=server.port, dispatcher=lambda fn: fn())
             p._wire_event_handlers()
             self.assertTrue(p.connect())
             self.assertTrue(p.client.is_connected())
@@ -55,24 +55,24 @@ class PluginLifecycleTests(unittest.TestCase):
             server.stop()
 
     def test_connect_failure(self):
-        p = plug_mod.AutonomaPlugin()
+        p = plug_mod.A6sPlugin()
         p.settings = plug_mod._StaticSettings({"daemon_port": 1, "auto_connect": False, "telemetry_enabled": False})
-        import autonoma_client as ac
-        p.client = ac.AutonomaClient(port=1, dispatcher=lambda fn: fn())
+        import a6s_client as ac
+        p.client = ac.A6sClient(port=1, dispatcher=lambda fn: fn())
         self.assertFalse(p.connect())
 
     def test_connect_with_no_client(self):
-        p = plug_mod.AutonomaPlugin()
+        p = plug_mod.A6sPlugin()
         p.client = None
         self.assertFalse(p.connect())
 
     def test_event_handlers_fire(self):
         server = MockWebSocketServer(handler=_make_handler()).start()
         try:
-            p = plug_mod.AutonomaPlugin()
+            p = plug_mod.A6sPlugin()
             p.settings = plug_mod._StaticSettings({"daemon_port": server.port, "auto_connect": False, "telemetry_enabled": False})
-            import autonoma_client as ac
-            p.client = ac.AutonomaClient(port=server.port, dispatcher=lambda fn: fn())
+            import a6s_client as ac
+            p.client = ac.A6sClient(port=server.port, dispatcher=lambda fn: fn())
             p._wire_event_handlers()
             p.connect()
 

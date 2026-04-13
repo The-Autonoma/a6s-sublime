@@ -13,5 +13,5 @@ if ! command -v coverage >/dev/null 2>&1; then
 fi
 
 coverage erase
-coverage run --source=autonoma_client,autonoma_commands,autonoma_ui,Autonoma -m unittest discover -s tests -v
+coverage run --source=a6s_client,a6s_commands,a6s_ui,Autonoma -m unittest discover -s tests -v
 coverage report -m --fail-under=80

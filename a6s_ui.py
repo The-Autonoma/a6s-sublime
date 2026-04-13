@@ -17,8 +17,8 @@ except Exception:  # pragma: no cover
     _HAS_SUBLIME = False
 
 
-STATUS_KEY = "autonoma"
-OUTPUT_PANEL_NAME = "autonoma_output"
+STATUS_KEY = "a6s"
+OUTPUT_PANEL_NAME = "a6s_output"
 
 
 def _on_main(fn: Callable[[], None]) -> None:

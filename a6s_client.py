@@ -193,10 +193,10 @@ class _Future:
 
 
 # ---------------------------------------------------------------------------
-# AutonomaClient
+# A6sClient
 # ---------------------------------------------------------------------------
 
-class AutonomaClient:
+class A6sClient:
     """Thread-safe WebSocket client for the Autonoma daemon."""
 
     def __init__(
@@ -251,7 +251,7 @@ class AutonomaClient:
         self._sock = sock
         self._connected = True
         self._stop.clear()
-        self._reader = threading.Thread(target=self._read_loop, daemon=True, name="autonoma-ws-reader")
+        self._reader = threading.Thread(target=self._read_loop, daemon=True, name="a6s-ws-reader")
         self._reader.start()
         self._emit("connected", {})
 

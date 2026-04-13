@@ -10,7 +10,7 @@ through the local `a6s` daemon.
 - The A6s CLI daemon running locally:
 
   ```bash
-  brew install autonoma-cli
+  brew install autonoma/tap/a6s
   a6s daemon
   ```
 

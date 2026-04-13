@@ -1,4 +1,4 @@
-"""Tests for autonoma_ui helpers using the sublime stub."""
+"""Tests for a6s_ui helpers using the sublime stub."""
 
 from __future__ import annotations
 
@@ -12,10 +12,10 @@ if _ROOT not in sys.path:
 
 from tests import sublime_stub  # noqa: E402
 
-# Install stub BEFORE importing autonoma_ui
+# Install stub BEFORE importing a6s_ui
 sublime_stub.install()
 
-import autonoma_ui as ui  # noqa: E402
+import a6s_ui as ui  # noqa: E402
 
 
 class StatusTests(unittest.TestCase):

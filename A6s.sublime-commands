@@ -1,0 +1,17 @@
+[
+    { "caption": "A6s: Connect to Daemon", "command": "a6s_connect" },
+    { "caption": "A6s: Disconnect from Daemon", "command": "a6s_disconnect" },
+    { "caption": "A6s: Invoke Agent...", "command": "a6s_invoke_agent" },
+    { "caption": "A6s: Explain Selection", "command": "a6s_explain" },
+    { "caption": "A6s: Refactor Selection", "command": "a6s_refactor" },
+    { "caption": "A6s: Review Selection", "command": "a6s_review" },
+    { "caption": "A6s: Generate Tests for Selection", "command": "a6s_generate_tests" },
+    { "caption": "A6s: List Agents", "command": "a6s_list_agents" },
+    { "caption": "A6s: Execution Status", "command": "a6s_execution_status" },
+    { "caption": "A6s: Launch Background Task", "command": "a6s_background_launch" },
+    { "caption": "A6s: Task Output", "command": "a6s_background_output" },
+    { "caption": "A6s: List Background Tasks", "command": "a6s_list_tasks" },
+    { "caption": "A6s: Cancel Background Task...", "command": "a6s_cancel_task" },
+    { "caption": "A6s: Preview Pending Artifacts", "command": "a6s_preview_artifacts" },
+    { "caption": "A6s: Apply Pending Artifacts", "command": "a6s_apply_artifacts" }
+]

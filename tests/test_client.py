@@ -1,4 +1,4 @@
-"""Tests for autonoma_client.AutonomaClient against a mock WS server."""
+"""Tests for a6s_client.A6sClient against a mock WS server."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
-import autonoma_client as ac  # noqa: E402
+import a6s_client as ac  # noqa: E402
 from tests.mock_ws_server import MockWebSocketServer  # noqa: E402
 
 
@@ -31,7 +31,7 @@ class ClientHandshakeTests(unittest.TestCase):
     def test_connect_and_disconnect(self):
         server = MockWebSocketServer().start()
         try:
-            client = ac.AutonomaClient(port=server.port, dispatcher=lambda fn: fn())
+            client = ac.A6sClient(port=server.port, dispatcher=lambda fn: fn())
             client.connect()
             self.assertTrue(client.is_connected())
             client.disconnect()
@@ -41,14 +41,14 @@ class ClientHandshakeTests(unittest.TestCase):
 
     def test_connect_refused(self):
         # Bind a socket, close it — port is free, connect should fail
-        client = ac.AutonomaClient(port=1, dispatcher=lambda fn: fn())
+        client = ac.A6sClient(port=1, dispatcher=lambda fn: fn())
         with self.assertRaises(ac.WebSocketError):
             client.connect()
 
     def test_connect_timeout_with_no_handshake(self):
         server = MockWebSocketServer(drop_before_handshake=True).start()
         try:
-            client = ac.AutonomaClient(port=server.port, dispatcher=lambda fn: fn())
+            client = ac.A6sClient(port=server.port, dispatcher=lambda fn: fn())
             with self.assertRaises(ac.WebSocketError):
                 client.connect(timeout=1.0)
         finally:
@@ -58,7 +58,7 @@ class ClientHandshakeTests(unittest.TestCase):
         # start server first so attempt succeeds on first try
         server = MockWebSocketServer().start()
         try:
-            client = ac.AutonomaClient(port=server.port, dispatcher=lambda fn: fn())
+            client = ac.A6sClient(port=server.port, dispatcher=lambda fn: fn())
             ok = client.reconnect_with_backoff(max_attempts=2)
             self.assertTrue(ok)
             client.disconnect()
@@ -66,7 +66,7 @@ class ClientHandshakeTests(unittest.TestCase):
             server.stop()
 
     def test_reconnect_with_backoff_fails(self):
-        client = ac.AutonomaClient(port=1, dispatcher=lambda fn: fn())
+        client = ac.A6sClient(port=1, dispatcher=lambda fn: fn())
         start = time.time()
         ok = client.reconnect_with_backoff(max_attempts=2)
         self.assertFalse(ok)
@@ -93,7 +93,7 @@ class ClientRequestTests(unittest.TestCase):
             "code.review": {"issues": [{"severity": "warning", "message": "use async"}], "summary": "ok"},
         }
         self.server = MockWebSocketServer(handler=_make_handler(self.responses)).start()
-        self.client = ac.AutonomaClient(port=self.server.port, dispatcher=lambda fn: fn())
+        self.client = ac.A6sClient(port=self.server.port, dispatcher=lambda fn: fn())
         self.client.connect()
 
     def tearDown(self):
@@ -169,7 +169,7 @@ class ClientRequestTests(unittest.TestCase):
         # Handler that never responds
         server = MockWebSocketServer(handler=lambda m: None).start()
         try:
-            c = ac.AutonomaClient(port=server.port, dispatcher=lambda fn: fn())
+            c = ac.A6sClient(port=server.port, dispatcher=lambda fn: fn())
             c.connect()
             try:
                 with self.assertRaises(ac.WebSocketError):
@@ -186,7 +186,7 @@ class ClientEventTests(unittest.TestCase):
         server = MockWebSocketServer(handler=_make_handler({"agents.list": []})).start()
         try:
             received = []
-            client = ac.AutonomaClient(port=server.port, dispatcher=lambda fn: fn())
+            client = ac.A6sClient(port=server.port, dispatcher=lambda fn: fn())
             client.on("phase.update", lambda d: received.append(("phase", d)))
             client.on("task.update", lambda d: received.append(("task", d)))
             client.on("execution.complete", lambda d: received.append(("done", d)))
@@ -211,7 +211,7 @@ class ClientEventTests(unittest.TestCase):
         server = MockWebSocketServer().start()
         try:
             events = []
-            client = ac.AutonomaClient(port=server.port, dispatcher=lambda fn: fn())
+            client = ac.A6sClient(port=server.port, dispatcher=lambda fn: fn())
             client.on("connected", lambda d: events.append("c"))
             client.on("disconnected", lambda d: events.append("d"))
             client.connect()
@@ -222,7 +222,7 @@ class ClientEventTests(unittest.TestCase):
             server.stop()
 
     def test_off_removes_handler(self):
-        client = ac.AutonomaClient(dispatcher=lambda fn: fn())
+        client = ac.A6sClient(dispatcher=lambda fn: fn())
         calls = []
         def h(d):
             calls.append(d)
@@ -232,16 +232,16 @@ class ClientEventTests(unittest.TestCase):
         self.assertEqual(calls, [])
 
     def test_unknown_event_is_noop(self):
-        client = ac.AutonomaClient(dispatcher=lambda fn: fn())
+        client = ac.A6sClient(dispatcher=lambda fn: fn())
         # No handlers registered - must not raise
         client._emit("never.seen", {"foo": 1})
 
     def test_invalid_json_ignored(self):
-        client = ac.AutonomaClient(dispatcher=lambda fn: fn())
+        client = ac.A6sClient(dispatcher=lambda fn: fn())
         client._handle_text(b"not json")  # must not raise
 
     def test_handler_exception_isolated(self):
-        client = ac.AutonomaClient(dispatcher=lambda fn: fn())
+        client = ac.A6sClient(dispatcher=lambda fn: fn())
         def bad(d):
             raise RuntimeError("boom")
         good_calls = []

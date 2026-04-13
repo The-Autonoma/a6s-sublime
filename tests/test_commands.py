@@ -1,4 +1,4 @@
-"""Tests for autonoma_commands with sublime stub + mock client."""
+"""Tests for a6s_commands with sublime stub + mock client."""
 
 from __future__ import annotations
 
@@ -13,8 +13,8 @@ if _ROOT not in sys.path:
 from tests import sublime_stub  # noqa: E402
 sublime_stub.install()
 
-import autonoma_commands as cmds  # noqa: E402
-import autonoma_ui as ui  # noqa: E402
+import a6s_commands as cmds  # noqa: E402
+import a6s_ui as ui  # noqa: E402
 
 
 class _FakeClient:
@@ -102,7 +102,7 @@ class _FakePlugin:
 
 
 def _install_plugin(client, connect_ok=True):
-    import Autonoma as plug_mod  # noqa: N813
+    import A6s as plug_mod  # noqa: N813
     plug_mod.PLUGIN = _FakePlugin(client, connect_ok=connect_ok)
     return plug_mod.PLUGIN
 
@@ -136,20 +136,20 @@ class ConnectionCommandTests(unittest.TestCase):
 
     def test_connect_success(self):
         _install_plugin(self.client, connect_ok=True)
-        cmd = cmds.AutonomaConnectCommand(self.window)
+        cmd = cmds.A6sConnectCommand(self.window)
         cmd.window = self.window
         cmd.run()
 
     def test_connect_failure_shows_instructions(self):
         _install_plugin(self.client, connect_ok=False)
-        cmd = cmds.AutonomaConnectCommand(self.window)
+        cmd = cmds.A6sConnectCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(any("a6s code --daemon" in m for m in sublime_stub.messages()))
 
     def test_disconnect(self):
         _install_plugin(self.client)
-        cmd = cmds.AutonomaDisconnectCommand(self.window)
+        cmd = cmds.A6sDisconnectCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertFalse(self.client.connected)
@@ -170,7 +170,7 @@ class InvokeAgentTests(unittest.TestCase):
         _install_plugin(self.client)
 
     def test_happy_path(self):
-        cmd = cmds.AutonomaInvokeAgentCommand(self.window)
+        cmd = cmds.A6sInvokeAgentCommand(self.window)
         cmd.window = self.window
         cmd.run()
         # quick panel shown, then simulate pick
@@ -184,7 +184,7 @@ class InvokeAgentTests(unittest.TestCase):
         self.assertTrue(any(c[0] == "invoke_agent" for c in self.client.calls))
 
     def test_empty_task_validation(self):
-        cmd = cmds.AutonomaInvokeAgentCommand(self.window)
+        cmd = cmds.A6sInvokeAgentCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, cb = self.window.quick_panel_calls[0]
@@ -195,20 +195,20 @@ class InvokeAgentTests(unittest.TestCase):
 
     def test_list_agents_failure(self):
         self.client.raise_on = "list_agents"
-        cmd = cmds.AutonomaInvokeAgentCommand(self.window)
+        cmd = cmds.A6sInvokeAgentCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(sublime_stub.errors())
 
     def test_no_agents(self):
         self.client.agents = []
-        cmd = cmds.AutonomaInvokeAgentCommand(self.window)
+        cmd = cmds.A6sInvokeAgentCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(sublime_stub.errors())
 
     def test_cancel_agent_picker(self):
-        cmd = cmds.AutonomaInvokeAgentCommand(self.window)
+        cmd = cmds.A6sInvokeAgentCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, cb = self.window.quick_panel_calls[0]
@@ -231,35 +231,35 @@ class SelectionCommandTests(unittest.TestCase):
         cmd.run(edit=None)
 
     def test_explain(self):
-        self._run(cmds.AutonomaExplainCommand)
+        self._run(cmds.A6sExplainCommand)
         self.assertTrue(any(c[0] == "explain_code" for c in self.client.calls))
 
     def test_refactor(self):
-        self._run(cmds.AutonomaRefactorCommand)
+        self._run(cmds.A6sRefactorCommand)
         self.assertTrue(any(c[0] == "refactor_code" for c in self.client.calls))
 
     def test_review(self):
-        self._run(cmds.AutonomaReviewCommand)
+        self._run(cmds.A6sReviewCommand)
         self.assertTrue(any(c[0] == "review_code" for c in self.client.calls))
 
     def test_generate_tests(self):
-        self._run(cmds.AutonomaGenerateTestsCommand)
+        self._run(cmds.A6sGenerateTestsCommand)
         self.assertTrue(any(c[0] == "generate_tests" for c in self.client.calls))
 
     def test_no_selection_uses_buffer(self):
         self.view._sel = [sublime_stub.Region(0, 0)]
-        self._run(cmds.AutonomaExplainCommand)
+        self._run(cmds.A6sExplainCommand)
         self.assertTrue(any(c[0] == "explain_code" for c in self.client.calls))
 
     def test_empty_buffer_rejected(self):
         self.view._text = ""
         self.view._sel = [sublime_stub.Region(0, 0)]
-        self._run(cmds.AutonomaExplainCommand)
+        self._run(cmds.A6sExplainCommand)
         self.assertTrue(sublime_stub.errors())
 
     def test_disconnected_client_refuses(self):
         self.client.connected = False
-        self._run(cmds.AutonomaExplainCommand)
+        self._run(cmds.A6sExplainCommand)
         self.assertTrue(sublime_stub.errors())
 
 
@@ -271,7 +271,7 @@ class ListAgentsCommandTests(unittest.TestCase):
         _install_plugin(self.client)
 
     def test_happy_path(self):
-        cmd = cmds.AutonomaListAgentsCommand(self.window)
+        cmd = cmds.A6sListAgentsCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(any(c[0] == "list_agents" for c in self.client.calls))
@@ -282,14 +282,14 @@ class ListAgentsCommandTests(unittest.TestCase):
 
     def test_no_agents(self):
         self.client.agents = []
-        cmd = cmds.AutonomaListAgentsCommand(self.window)
+        cmd = cmds.A6sListAgentsCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(sublime_stub.errors())
 
     def test_list_failure(self):
         self.client.raise_on = "list_agents"
-        cmd = cmds.AutonomaListAgentsCommand(self.window)
+        cmd = cmds.A6sListAgentsCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(sublime_stub.errors())
@@ -303,7 +303,7 @@ class ExecutionStatusCommandTests(unittest.TestCase):
         _install_plugin(self.client)
 
     def test_happy_path(self):
-        cmd = cmds.AutonomaExecutionStatusCommand(self.window)
+        cmd = cmds.A6sExecutionStatusCommand(self.window)
         cmd.window = self.window
         cmd.run()
         caption, initial, on_done = self.window.input_panel_calls[0]
@@ -311,7 +311,7 @@ class ExecutionStatusCommandTests(unittest.TestCase):
         self.assertTrue(any(c[0] == "execution_status" for c in self.client.calls))
 
     def test_empty_input(self):
-        cmd = cmds.AutonomaExecutionStatusCommand(self.window)
+        cmd = cmds.A6sExecutionStatusCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, _, on_done = self.window.input_panel_calls[0]
@@ -320,7 +320,7 @@ class ExecutionStatusCommandTests(unittest.TestCase):
 
     def test_failure(self):
         self.client.raise_on = "execution_status"
-        cmd = cmds.AutonomaExecutionStatusCommand(self.window)
+        cmd = cmds.A6sExecutionStatusCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, _, on_done = self.window.input_panel_calls[0]
@@ -336,7 +336,7 @@ class BackgroundLaunchCommandTests(unittest.TestCase):
         _install_plugin(self.client)
 
     def test_happy_path(self):
-        cmd = cmds.AutonomaBackgroundLaunchCommand(self.window)
+        cmd = cmds.A6sBackgroundLaunchCommand(self.window)
         cmd.window = self.window
         cmd.run()
         # agent picker shown
@@ -348,7 +348,7 @@ class BackgroundLaunchCommandTests(unittest.TestCase):
         self.assertTrue(any(c[0] == "background_launch" for c in self.client.calls))
 
     def test_empty_task(self):
-        cmd = cmds.AutonomaBackgroundLaunchCommand(self.window)
+        cmd = cmds.A6sBackgroundLaunchCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, cb = self.window.quick_panel_calls[0]
@@ -358,7 +358,7 @@ class BackgroundLaunchCommandTests(unittest.TestCase):
         self.assertTrue(sublime_stub.errors())
 
     def test_cancel_picker(self):
-        cmd = cmds.AutonomaBackgroundLaunchCommand(self.window)
+        cmd = cmds.A6sBackgroundLaunchCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, cb = self.window.quick_panel_calls[0]
@@ -367,7 +367,7 @@ class BackgroundLaunchCommandTests(unittest.TestCase):
 
     def test_launch_failure(self):
         self.client.raise_on = "background_launch"
-        cmd = cmds.AutonomaBackgroundLaunchCommand(self.window)
+        cmd = cmds.A6sBackgroundLaunchCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, cb = self.window.quick_panel_calls[0]
@@ -385,7 +385,7 @@ class BackgroundOutputCommandTests(unittest.TestCase):
         _install_plugin(self.client)
 
     def test_happy_path(self):
-        cmd = cmds.AutonomaBackgroundOutputCommand(self.window)
+        cmd = cmds.A6sBackgroundOutputCommand(self.window)
         cmd.window = self.window
         cmd.run()
         caption, initial, on_done = self.window.input_panel_calls[0]
@@ -393,7 +393,7 @@ class BackgroundOutputCommandTests(unittest.TestCase):
         self.assertTrue(any(c[0] == "background_output" for c in self.client.calls))
 
     def test_empty_input(self):
-        cmd = cmds.AutonomaBackgroundOutputCommand(self.window)
+        cmd = cmds.A6sBackgroundOutputCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, _, on_done = self.window.input_panel_calls[0]
@@ -402,7 +402,7 @@ class BackgroundOutputCommandTests(unittest.TestCase):
 
     def test_failure(self):
         self.client.raise_on = "background_output"
-        cmd = cmds.AutonomaBackgroundOutputCommand(self.window)
+        cmd = cmds.A6sBackgroundOutputCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, _, on_done = self.window.input_panel_calls[0]
@@ -418,7 +418,7 @@ class BackgroundCommandTests(unittest.TestCase):
         _install_plugin(self.client)
 
     def test_list_tasks(self):
-        cmd = cmds.AutonomaListTasksCommand(self.window)
+        cmd = cmds.A6sListTasksCommand(self.window)
         cmd.window = self.window
         cmd.run()
         items, cb = self.window.quick_panel_calls[0]
@@ -427,7 +427,7 @@ class BackgroundCommandTests(unittest.TestCase):
 
     def test_list_tasks_empty(self):
         self.client.tasks = []
-        cmd = cmds.AutonomaListTasksCommand(self.window)
+        cmd = cmds.A6sListTasksCommand(self.window)
         cmd.window = self.window
         cmd.run()
         # No quick panel when empty
@@ -435,13 +435,13 @@ class BackgroundCommandTests(unittest.TestCase):
 
     def test_list_tasks_failure(self):
         self.client.raise_on = "background_list"
-        cmd = cmds.AutonomaListTasksCommand(self.window)
+        cmd = cmds.A6sListTasksCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(sublime_stub.errors())
 
     def test_cancel_task(self):
-        cmd = cmds.AutonomaCancelTaskCommand(self.window)
+        cmd = cmds.A6sCancelTaskCommand(self.window)
         cmd.window = self.window
         cmd.run()
         _, cb = self.window.quick_panel_calls[0]
@@ -450,7 +450,7 @@ class BackgroundCommandTests(unittest.TestCase):
 
     def test_cancel_no_active_tasks(self):
         self.client.tasks = self.client.completed_tasks
-        cmd = cmds.AutonomaCancelTaskCommand(self.window)
+        cmd = cmds.A6sCancelTaskCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(sublime_stub.errors())
@@ -464,25 +464,25 @@ class ArtifactCommandTests(unittest.TestCase):
         _install_plugin(self.client)
 
     def test_preview(self):
-        cmd = cmds.AutonomaPreviewArtifactsCommand(self.window)
+        cmd = cmds.A6sPreviewArtifactsCommand(self.window)
         cmd.window = self.window
         cmd.run(artifacts=[{"id": "a1"}])
         self.assertTrue(any(c[0] == "artifacts_preview" for c in self.client.calls))
 
     def test_preview_empty(self):
-        cmd = cmds.AutonomaPreviewArtifactsCommand(self.window)
+        cmd = cmds.A6sPreviewArtifactsCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(any(c[0] == "artifacts_preview" for c in self.client.calls))
 
     def test_apply(self):
-        cmd = cmds.AutonomaApplyArtifactsCommand(self.window)
+        cmd = cmds.A6sApplyArtifactsCommand(self.window)
         cmd.window = self.window
         cmd.run(artifacts=[{"id": "a1"}])
         self.assertTrue(any(c[0] == "artifacts_apply" for c in self.client.calls))
 
     def test_apply_empty(self):
-        cmd = cmds.AutonomaApplyArtifactsCommand(self.window)
+        cmd = cmds.A6sApplyArtifactsCommand(self.window)
         cmd.window = self.window
         cmd.run()
         self.assertTrue(any(c[0] == "artifacts_apply" for c in self.client.calls))

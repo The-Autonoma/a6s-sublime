@@ -33,7 +33,7 @@ jobs:
       - uses: SublimeText/UnitTesting/actions/setup@v1
         with:
           sublime-text-version: ${{ matrix.st-version }}
-          package-name: Autonoma
+          package-name: A6s
       - uses: SublimeText/UnitTesting/actions/run-tests@v1
         with:
-          package-name: Autonoma
+          package-name: A6s

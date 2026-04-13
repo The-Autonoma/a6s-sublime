@@ -19,22 +19,22 @@ except Exception:  # pragma: no cover
     _HAS_SUBLIME = False
 
 try:
-    import autonoma_client as _client_mod  # type: ignore
-    import autonoma_ui as ui  # type: ignore
+    import a6s_client as _client_mod  # type: ignore
+    import a6s_ui as ui  # type: ignore
 except Exception:  # pragma: no cover
-    from . import autonoma_client as _client_mod  # type: ignore
-    from . import autonoma_ui as ui  # type: ignore
+    from . import a6s_client as _client_mod  # type: ignore
+    from . import a6s_ui as ui  # type: ignore
 
 
-SETTINGS_FILE = "Autonoma.sublime-settings"
+SETTINGS_FILE = "A6s.sublime-settings"
 DEFAULT_PORT = 9876
 
 
-class AutonomaPlugin:
+class A6sPlugin:
     """Plugin singleton holding client + settings."""
 
     def __init__(self) -> None:
-        self.client: Optional[_client_mod.AutonomaClient] = None
+        self.client: Optional[_client_mod.A6sClient] = None
         self.settings: Any = _StaticSettings({}) if not _HAS_SUBLIME else None
         self._lock = threading.Lock()
 
@@ -44,7 +44,7 @@ class AutonomaPlugin:
         if _HAS_SUBLIME:
             self.settings = sublime.load_settings(SETTINGS_FILE)  # type: ignore
         port = int(self.settings.get("daemon_port", DEFAULT_PORT) or DEFAULT_PORT)
-        self.client = _client_mod.AutonomaClient(host="localhost", port=port)
+        self.client = _client_mod.A6sClient(host="localhost", port=port)
         self._wire_event_handlers()
         self._show_telemetry_prompt_if_needed()
         if self.settings.get("auto_connect", True):
@@ -181,12 +181,12 @@ class _StaticSettings(dict):
         self[key] = value
 
 
-PLUGIN: Optional[AutonomaPlugin] = None
+PLUGIN: Optional[A6sPlugin] = None
 
 
 def plugin_loaded() -> None:  # pragma: no cover - invoked by Sublime only
     global PLUGIN
-    PLUGIN = AutonomaPlugin()
+    PLUGIN = A6sPlugin()
     PLUGIN.load()
 
 

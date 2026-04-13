@@ -5,34 +5,34 @@
             { "caption": "-" },
             {
                 "caption": "A6s",
-                "id": "autonoma",
+                "id": "a6s",
                 "children": [
-                    { "caption": "Connect to Daemon", "command": "autonoma_connect" },
-                    { "caption": "Disconnect from Daemon", "command": "autonoma_disconnect" },
+                    { "caption": "Connect to Daemon", "command": "a6s_connect" },
+                    { "caption": "Disconnect from Daemon", "command": "a6s_disconnect" },
                     { "caption": "-" },
-                    { "caption": "Invoke Agent...", "command": "autonoma_invoke_agent" },
+                    { "caption": "Invoke Agent...", "command": "a6s_invoke_agent" },
                     { "caption": "-" },
-                    { "caption": "Explain Selection", "command": "autonoma_explain" },
-                    { "caption": "Refactor Selection", "command": "autonoma_refactor" },
-                    { "caption": "Review Selection", "command": "autonoma_review" },
-                    { "caption": "Generate Tests for Selection", "command": "autonoma_generate_tests" },
+                    { "caption": "Explain Selection", "command": "a6s_explain" },
+                    { "caption": "Refactor Selection", "command": "a6s_refactor" },
+                    { "caption": "Review Selection", "command": "a6s_review" },
+                    { "caption": "Generate Tests for Selection", "command": "a6s_generate_tests" },
                     { "caption": "-" },
-                    { "caption": "List Agents", "command": "autonoma_list_agents" },
-                    { "caption": "Execution Status", "command": "autonoma_execution_status" },
+                    { "caption": "List Agents", "command": "a6s_list_agents" },
+                    { "caption": "Execution Status", "command": "a6s_execution_status" },
                     { "caption": "-" },
-                    { "caption": "Launch Background Task", "command": "autonoma_background_launch" },
-                    { "caption": "Task Output", "command": "autonoma_background_output" },
-                    { "caption": "List Background Tasks", "command": "autonoma_list_tasks" },
-                    { "caption": "Cancel Background Task...", "command": "autonoma_cancel_task" },
+                    { "caption": "Launch Background Task", "command": "a6s_background_launch" },
+                    { "caption": "Task Output", "command": "a6s_background_output" },
+                    { "caption": "List Background Tasks", "command": "a6s_list_tasks" },
+                    { "caption": "Cancel Background Task...", "command": "a6s_cancel_task" },
                     { "caption": "-" },
-                    { "caption": "Preview Pending Artifacts", "command": "autonoma_preview_artifacts" },
-                    { "caption": "Apply Pending Artifacts", "command": "autonoma_apply_artifacts" },
+                    { "caption": "Preview Pending Artifacts", "command": "a6s_preview_artifacts" },
+                    { "caption": "Apply Pending Artifacts", "command": "a6s_apply_artifacts" },
                     { "caption": "-" },
                     {
                         "caption": "Settings",
                         "command": "edit_settings",
                         "args": {
-                            "base_file": "${packages}/Autonoma/Autonoma.sublime-settings",
+                            "base_file": "${packages}/A6s/A6s.sublime-settings",
                             "default": "// A6s user settings\n{\n\t\n}\n"
                         }
                     }
@@ -55,7 +55,7 @@
                                 "caption": "Settings",
                                 "command": "edit_settings",
                                 "args": {
-                                    "base_file": "${packages}/Autonoma/Autonoma.sublime-settings",
+                                    "base_file": "${packages}/A6s/A6s.sublime-settings",
                                     "default": "// A6s user settings\n{\n\t\n}\n"
                                 }
                             },
@@ -63,7 +63,7 @@
                                 "caption": "Key Bindings",
                                 "command": "edit_settings",
                                 "args": {
-                                    "base_file": "${packages}/Autonoma/Default.sublime-keymap",
+                                    "base_file": "${packages}/A6s/Default.sublime-keymap",
                                     "default": "// A6s user key bindings\n[\n\t\n]\n"
                                 }
                             }
