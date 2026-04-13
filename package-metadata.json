@@ -1,9 +1,9 @@
 {
     "description": "A6s: invoke RIGOR agents, explain/refactor/review/test code from within Sublime Text via the local A6s daemon.",
-    "homepage": "https://github.com/autonoma/sublime-a6s-code",
+    "homepage": "https://github.com/The-Autonoma/a6s-sublime",
     "labels": ["ai", "code-generation", "refactor", "review", "testing", "rigor", "a6s"],
-    "readme": "https://raw.githubusercontent.com/autonoma/sublime-a6s-code/main/README.md",
-    "issues": "https://github.com/autonoma/sublime-a6s-code/issues",
+    "readme": "https://raw.githubusercontent.com/The-Autonoma/a6s-sublime/main/README.md",
+    "issues": "https://github.com/The-Autonoma/a6s-sublime/issues",
     "buy": null,
     "donate": null,
     "previous_names": [],
@@ -13,7 +13,7 @@
         {
             "version": "1.0.0",
             "sublime_text": ">=4107",
-            "url": "https://github.com/autonoma/sublime-a6s-code/releases/download/v1.0.0/A6s.sublime-package",
+            "url": "https://github.com/The-Autonoma/a6s-sublime/releases/download/v1.0.0/A6s.sublime-package",
             "date": "2026-04-04 00:00:00"
         }
     ],
