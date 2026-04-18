@@ -1,7 +1,7 @@
 """
-Autonoma Sublime Text 4 plugin entry point.
+A6s Sublime Text 4 plugin entry point.
 
-Sublime loads the top-level Autonoma.py module once per plugin host. Keep
+Sublime loads the top-level A6s.py module once per plugin host. Keep
 global state minimal and guard Sublime imports so the module can be imported
 from unit tests outside Sublime.
 """

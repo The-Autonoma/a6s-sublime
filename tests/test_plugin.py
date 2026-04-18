@@ -1,4 +1,4 @@
-"""Tests for Autonoma.py plugin singleton."""
+"""Tests for A6s.py plugin singleton."""
 
 from __future__ import annotations
 

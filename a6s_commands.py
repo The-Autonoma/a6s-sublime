@@ -1,5 +1,5 @@
 """
-Sublime Text commands for the Autonoma plugin.
+Sublime Text commands for the A6s plugin.
 
 All long-running work (daemon RPC) is dispatched to a worker thread via
 sublime.set_timeout_async to avoid blocking the UI. View mutations are
@@ -74,7 +74,7 @@ def _run_async(fn: Callable[[], None]) -> None:
 
 
 def _get_plugin() -> Any:
-    """Return the current Autonoma plugin singleton from A6s module."""
+    """Return the current A6s plugin singleton from A6s module."""
     try:
         from . import A6s as plug  # type: ignore
     except Exception:
@@ -511,3 +511,192 @@ class A6sApplyArtifactsCommand(_WindowCommand):
                 ),
             )
         _run_async(work)
+
+
+# ---------------------------------------------------------------------------
+# Fleet commands
+# ---------------------------------------------------------------------------
+
+class A6sFleetListCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def work() -> None:
+            try:
+                agents = client.fleet_list()
+            except Exception as exc:
+                ui.show_error("A6s: fleet list failed: {}".format(exc))
+                return
+            if not agents:
+                ui.write_output(self.window, "A6s: no agents in fleet.")
+                return
+            lines = ["=== Fleet ({} agents) ===".format(len(agents))]
+            for a in agents:
+                lines.append("{}: {} [{}]".format(
+                    a.get("id", "?"),
+                    a.get("name", "?"),
+                    a.get("status", "unknown"),
+                ))
+            ui.write_output(self.window, "\n".join(lines))
+        _run_async(work)
+
+
+class A6sFleetStatusCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def fetch() -> None:
+            try:
+                agents = client.fleet_list()
+            except Exception as exc:
+                ui.show_error("A6s: fleet list failed: {}".format(exc))
+                return
+            if not agents:
+                ui.show_error("A6s: no agents in fleet.")
+                return
+            def on_agent(agent: Optional[Dict[str, Any]]) -> None:
+                if agent is None:
+                    return
+                def work() -> None:
+                    try:
+                        result = client.fleet_status(agent.get("id", ""))
+                    except Exception as exc:
+                        ui.show_error("A6s: fleet status failed: {}".format(exc))
+                        return
+                    ui.write_output(
+                        self.window,
+                        "=== Fleet Status: {} ===\nstatus={} uptime={} tasks={}".format(
+                            agent.get("name", agent.get("id", "?")),
+                            result.get("status", "unknown"),
+                            result.get("uptime", "?"),
+                            result.get("activeTasks", 0),
+                        ),
+                    )
+                _run_async(work)
+            ui.show_agent_picker(self.window, agents, on_agent)
+        _run_async(fetch)
+
+
+# ---------------------------------------------------------------------------
+# Workflow commands
+# ---------------------------------------------------------------------------
+
+class A6sWorkflowListCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def work() -> None:
+            try:
+                workflows = client.workflow_list()
+            except Exception as exc:
+                ui.show_error("A6s: workflow list failed: {}".format(exc))
+                return
+            if not workflows:
+                ui.write_output(self.window, "A6s: no workflows available.")
+                return
+            lines = ["=== Workflows ({}) ===".format(len(workflows))]
+            for w in workflows:
+                lines.append("{}: {}".format(
+                    w.get("id", "?"), w.get("description", w.get("name", ""))
+                ))
+            ui.write_output(self.window, "\n".join(lines))
+        _run_async(work)
+
+
+class A6sWorkflowRunCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def fetch() -> None:
+            try:
+                workflows = client.workflow_list()
+            except Exception as exc:
+                ui.show_error("A6s: workflow list failed: {}".format(exc))
+                return
+            if not workflows:
+                ui.show_error("A6s: no workflows available.")
+                return
+            items = [
+                [w.get("name", w.get("id", "?")), w.get("description", "")]
+                for w in workflows
+            ]
+            def on_pick(idx: int) -> None:
+                if idx < 0:
+                    return
+                workflow = workflows[idx]
+                def do_run() -> None:
+                    try:
+                        exec_id = client.workflow_run(workflow.get("id", ""))
+                        ui.write_output(
+                            self.window,
+                            "A6s: started workflow {} (execution {})".format(
+                                workflow.get("name", workflow.get("id", "?")), exec_id
+                            ),
+                        )
+                    except Exception as exc:
+                        ui.show_error("A6s: workflow run failed: {}".format(exc))
+                _run_async(do_run)
+            def show() -> None:
+                if self.window is None:
+                    return
+                self.window.show_quick_panel(items, on_pick)
+            if _HAS_SUBLIME:
+                import sublime as _sl
+                _sl.set_timeout(show, 0)  # type: ignore
+            else:
+                show()
+        _run_async(fetch)
+
+
+class A6sWorkflowStatusCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def on_exec_id(exec_id: str) -> None:
+            validated = validate_input(exec_id)
+            if validated is None:
+                return
+            def work() -> None:
+                try:
+                    result = client.workflow_status(validated)
+                except Exception as exc:
+                    ui.show_error("A6s: workflow status failed: {}".format(exc))
+                    return
+                ui.write_output(
+                    self.window,
+                    "=== Workflow Execution {} ===\nstatus={} phase={} progress={}%".format(
+                        validated,
+                        result.get("status", "unknown"),
+                        result.get("phase", "unknown"),
+                        result.get("progress", 0),
+                    ),
+                )
+            _run_async(work)
+        ui.show_input(self.window, "Workflow Execution ID:", "", on_exec_id)
+
+
+class A6sWorkflowCancelCommand(_WindowCommand):
+    def run(self) -> None:  # type: ignore[override]
+        client = _require_client(self.window)
+        if client is None:
+            return
+        def on_exec_id(exec_id: str) -> None:
+            validated = validate_input(exec_id)
+            if validated is None:
+                return
+            def work() -> None:
+                try:
+                    client.workflow_cancel(validated)
+                    ui.write_output(
+                        self.window,
+                        "A6s: cancelled workflow execution {}.".format(validated),
+                    )
+                except Exception as exc:
+                    ui.show_error("A6s: workflow cancel failed: {}".format(exc))
+            _run_async(work)
+        ui.show_input(self.window, "Workflow Execution ID to cancel:", "", on_exec_id)

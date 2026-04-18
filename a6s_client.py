@@ -1,8 +1,7 @@
 """
-Autonoma WebSocket client for Sublime Text 4.
+A6s WebSocket client for Sublime Text 4.
 
-Implements the authoritative Autonoma Daemon Protocol v1.0:
-# See https://www.theautonoma.io/docs/build/cli/daemon
+Implements the authoritative DAEMON-PROTOCOL.md spec (v1.0):
     ws://localhost:9876/ws
 
 This module uses only the Python 3.8 stdlib (socket, struct, threading, json,
@@ -197,7 +196,7 @@ class _Future:
 # ---------------------------------------------------------------------------
 
 class A6sClient:
-    """Thread-safe WebSocket client for the Autonoma daemon."""
+    """Thread-safe WebSocket client for the A6s daemon."""
 
     def __init__(
         self,
@@ -465,3 +464,39 @@ class A6sClient:
             "code": code, "language": language, "filePath": file_path,
             "reviewType": review_type,
         }) or {"issues": [], "summary": ""}
+
+    # -- fleet methods -------------------------------------------------------
+
+    def fleet_list(self) -> List[Dict[str, Any]]:
+        return self.request("fleet.list", {}) or []
+
+    def fleet_status(self, agent_id: str) -> Dict[str, Any]:
+        return self.request("fleet.status", {"agentId": agent_id}) or {}
+
+    def fleet_command(self, agent_id: str, command: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        return self.request("fleet.command", {
+            "agentId": agent_id,
+            "command": command,
+            "params": params or {},
+        }) or {}
+
+    # -- workflow methods -----------------------------------------------------
+
+    def workflow_list(self, domain: str = "") -> List[Dict[str, Any]]:
+        p: Dict[str, Any] = {}
+        if domain:
+            p["domain"] = domain
+        return self.request("workflows.list", p) or []
+
+    def workflow_run(self, workflow_id: str, inputs: Optional[Dict[str, Any]] = None) -> str:
+        result = self.request("workflows.run", {
+            "workflowId": workflow_id,
+            "inputs": inputs or {},
+        })
+        return result.get("executionId", "") if isinstance(result, dict) else ""
+
+    def workflow_status(self, execution_id: str) -> Dict[str, Any]:
+        return self.request("workflows.status", {"executionId": execution_id}) or {}
+
+    def workflow_cancel(self, execution_id: str) -> None:
+        self.request("workflows.cancel", {"executionId": execution_id})

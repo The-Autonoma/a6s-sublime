@@ -1,5 +1,5 @@
 """
-UI helpers for the Autonoma Sublime plugin.
+UI helpers for the A6s Sublime plugin.
 
 All view/window mutations MUST go through sublime.set_timeout to stay on the
 main thread. These helpers centralize that discipline.
