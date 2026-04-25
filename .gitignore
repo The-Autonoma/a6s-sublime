@@ -1,3 +1,18 @@
+# Python build artifacts
 __pycache__/
 *.pyc
+*.pyo
 .coverage
+
+# Local dev tools
+.python-version
+*.egg-info/
+
+# Sublime Text packaged-plugin output
+*.sublime-package
+
+# Editor + OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
