@@ -100,4 +100,4 @@ the package root are auto-loaded by ST. No build step.
 
 ## License
 
-MIT — see `LICENSE`.
+Apache-2.0 — see `LICENSE`.
