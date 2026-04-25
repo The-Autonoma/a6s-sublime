@@ -1,8 +1,14 @@
+// A6s does not bind any keys by default to avoid conflicts.
+// To enable a binding, copy it into your user keymap:
+//   Preferences -> Key Bindings
+//
+// [
+//     { "keys": ["ctrl+alt+a"], "command": "a6s_invoke_agent" },
+//     { "keys": ["ctrl+alt+e"], "command": "a6s_explain" },
+//     { "keys": ["ctrl+alt+r"], "command": "a6s_refactor" },
+//     { "keys": ["ctrl+alt+v"], "command": "a6s_review" },
+//     { "keys": ["ctrl+alt+t"], "command": "a6s_generate_tests" },
+//     { "keys": ["ctrl+alt+l"], "command": "a6s_list_tasks" }
+// ]
 [
-    { "keys": ["ctrl+alt+a"], "command": "a6s_invoke_agent" },
-    { "keys": ["ctrl+alt+e"], "command": "a6s_explain" },
-    { "keys": ["ctrl+alt+r"], "command": "a6s_refactor" },
-    { "keys": ["ctrl+alt+v"], "command": "a6s_review" },
-    { "keys": ["ctrl+alt+t"], "command": "a6s_generate_tests" },
-    { "keys": ["ctrl+alt+l"], "command": "a6s_list_tasks" }
 ]

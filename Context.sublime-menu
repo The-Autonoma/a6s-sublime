@@ -3,10 +3,26 @@
     {
         "caption": "A6s",
         "children": [
-            { "caption": "Explain Selection", "command": "a6s_explain" },
-            { "caption": "Refactor Selection", "command": "a6s_refactor" },
-            { "caption": "Review Selection", "command": "a6s_review" },
-            { "caption": "Generate Tests", "command": "a6s_generate_tests" },
+            {
+                "caption": "Explain Selection",
+                "command": "a6s_explain",
+                "context": [{ "key": "selection_empty", "operator": "equal", "operand": false }]
+            },
+            {
+                "caption": "Refactor Selection",
+                "command": "a6s_refactor",
+                "context": [{ "key": "selection_empty", "operator": "equal", "operand": false }]
+            },
+            {
+                "caption": "Review Selection",
+                "command": "a6s_review",
+                "context": [{ "key": "selection_empty", "operator": "equal", "operand": false }]
+            },
+            {
+                "caption": "Generate Tests",
+                "command": "a6s_generate_tests",
+                "context": [{ "key": "selection_empty", "operator": "equal", "operand": false }]
+            },
             { "caption": "-" },
             { "caption": "Invoke Agent...", "command": "a6s_invoke_agent" }
         ]

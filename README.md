@@ -33,19 +33,23 @@ git clone https://github.com/The-Autonoma/autonoma-sublime.git A6s
 
 Restart Sublime Text.
 
-## Default key bindings
+## Suggested key bindings
 
-| Action | Shortcut |
-|---|---|
-| Invoke agent | `ctrl+alt+a` |
-| Explain selection | `ctrl+alt+e` |
-| Refactor selection | `ctrl+alt+r` |
-| Review selection | `ctrl+alt+v` |
-| Generate tests for selection | `ctrl+alt+t` |
-| List background tasks | `ctrl+alt+l` |
+A6s ships **no default key bindings** to avoid conflicts. Open
+`Default.sublime-keymap` (in this package) for a ready-to-paste template, or
+add your own in **Preferences → Key Bindings**. Suggested mappings:
 
-All commands are also available from **Tools → A6s** and the command palette
-(prefix every command with `A6s:`).
+| Action | Suggested shortcut | Command |
+|---|---|---|
+| Invoke agent | `ctrl+alt+a` | `a6s_invoke_agent` |
+| Explain selection | `ctrl+alt+e` | `a6s_explain` |
+| Refactor selection | `ctrl+alt+r` | `a6s_refactor` |
+| Review selection | `ctrl+alt+v` | `a6s_review` |
+| Generate tests | `ctrl+alt+t` | `a6s_generate_tests` |
+| List background tasks | `ctrl+alt+l` | `a6s_list_tasks` |
+
+All commands are also available from **Tools → A6s**, the right-click context
+menu, and the command palette (prefix every command with `A6s:`).
 
 ## Commands
 
